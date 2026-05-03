@@ -1,0 +1,63 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Solid Dark Obsidian Background -->
+  <rect width="512" height="512" rx="100" fill="#06090F"/>
+  
+  <!-- Subtle Cyan Grid -->
+  <g opacity="0.1">
+    <path d="M0 64H512M0 128H512M0 192H512M0 256H512M0 320H512M0 384H512M0 448H512" stroke="#28C7D0" stroke-width="1"/>
+    <path d="M64 0V512M128 0V512M192 0V512M256 0V512M320 0V512M384 0V512M448 0V512" stroke="#28C7D0" stroke-width="1"/>
+  </g>
+
+  <defs>
+    <!-- Cyan Neon Glow -->
+    <filter id="cyan-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Yellow Neon Glow -->
+    <filter id="yellow-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <linearGradient id="n-trace-grad" x1="160" y1="160" x2="352" y2="352" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D9E34B"/>
+      <stop offset="1" stop-color="#28C7D0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- The Hexagonal 'N' Structure -->
+  <g filter="url(#cyan-glow)">
+    <!-- Main N Traces Line -->
+    <path d="M170 160V352L342 160V352" stroke="url(#n-trace-grad)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Hexagonal Nodes (Pointy Top) -->
+    <!-- Top Left -->
+    <path d="M170 135L191.65 147.5V172.5L170 185L148.35 172.5V147.5L170 135Z" fill="#D9E34B" fill-opacity="0.3" stroke="#D9E34B" stroke-width="4"/>
+    <!-- Bottom Left -->
+    <path d="M170 327L191.65 339.5V364.5L170 377L148.35 364.5V339.5L170 327Z" fill="#28C7D0" fill-opacity="0.3" stroke="#28C7D0" stroke-width="4"/>
+    <!-- Top Right -->
+    <path d="M342 135L363.65 147.5V172.5L342 185L320.35 172.5V147.5L342 135Z" fill="#D9E34B" fill-opacity="0.3" stroke="#D9E34B" stroke-width="4"/>
+    <!-- Bottom Right -->
+    <path d="M342 327L363.65 339.5V364.5L342 377L320.35 364.5V339.5L342 327Z" fill="#28C7D0" fill-opacity="0.3" stroke="#28C7D0" stroke-width="4"/>
+    <!-- Middle Connector Node -->
+    <path d="M256 231L277.65 243.5V268.5L256 281L234.35 268.5V243.5L256 231Z" fill="#28C7D0" fill-opacity="0.1" stroke="#28C7D0" stroke-width="2"/>
+  </g>
+
+  <!-- External Circuit Decals -->
+  <g opacity="0.4">
+    <path d="M170 110V135" stroke="#D9E34B" stroke-width="2"/>
+    <path d="M170 377V402" stroke="#28C7D0" stroke-width="2"/>
+    <path d="M342 110V135" stroke="#D9E34B" stroke-width="2"/>
+    <path d="M342 377V402" stroke="#28C7D0" stroke-width="2"/>
+    <path d="M135 256H155" stroke="#D9E34B" stroke-width="2"/>
+    <path d="M357 256H377" stroke="#28C7D0" stroke-width="2"/>
+  </g>
+</svg>

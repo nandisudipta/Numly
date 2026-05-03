@@ -1,0 +1,16 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="100" fill="#06090F"/>
+  <path d="M140 120V392H210L302 245V392H372V120H302L210 267V120H140Z" fill="url(#paint0_linear_logo)"/>
+  <path d="M140 120H175V392H140V120Z" fill="#D9E34B" fill-opacity="0.8"/>
+  <path d="M337 120H372V392H337V120Z" fill="#28C7D0" fill-opacity="0.8"/>
+  <path d="M175 120L337 392" stroke="#D9E34B" stroke-width="20" stroke-linecap="round"/>
+  <path d="M175 392L337 120" stroke="#28C7D0" stroke-width="2" stroke-dasharray="10 10"/>
+  <defs>
+    <linearGradient id="paint0_linear_logo" x1="140" y1="120" x2="372" y2="392" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D9E34B"/>
+      <stop offset="1" stop-color="#28C7D0"/>
+    </linearGradient>
+  </defs>
+  <!-- Cyber board accents -->
+  <path d="M80 100H120M80 140H100M400 400H440M420 360H440" stroke="#28C7D0" stroke-width="2" opacity="0.3"/>
+</svg>

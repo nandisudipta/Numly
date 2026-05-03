@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --neon-rgb:   163 230 53;  /* Lime-400 */
+    --royal-rgb:  184 134 11;  /* Gold-ish Brown */
+
+    --radius-xl:  1rem;
+    --radius-2xl: 1.5rem;
+    --radius-3xl: 2rem;
+  }
+
+  /* 🔋 NEON - OLED Black / Lime / White */
+  .theme-neon {
+    --primary-rgb:     132 204 22; /* Lime-500 */
+    --bg:              #000000;
+    --primary:         #A3E635;
+    --primary-contrast:#000000;
+    --text-primary:    #FFFFFF;
+    --text-secondary:  #BEF264;
+    --text-label:      rgba(190, 242, 100, 0.7);
+    --bg-card:         rgba(15, 15, 18, 0.75);
+    --bg-card-active:  rgba(25, 25, 30, 0.85);
+    --bg-card-hover:   rgba(20, 20, 25, 0.95);
+    --bg-modal:        #000000;
+    --bg-input:        rgba(12, 12, 15, 0.95);
+    --border-color:    rgba(163, 230, 53, 0.15);
+    --border-input:    rgba(163, 230, 53, 0.25);
+    --badge-bg:        rgba(163, 230, 53, 0.15);
+    --badge-text:      #A3E635;
+    --tx-in:           #22C55E;
+    --tx-out:          #FF6B6B;
+  }
+
+  /* 👑 ROYAL - Ivory Brown / Gold */
+  .theme-royal {
+    --primary-rgb:     166 124 82;
+    --bg:              linear-gradient(160deg, #F9F7F2 0%, #E8DCC4 100%);
+    --primary:         #A67C52;
+    --primary-contrast:#FFFBF5;
+    --text-primary:    #2C1A0A;
+    --text-secondary:  #6D4C33;
+    --text-label:      rgba(109, 76, 51, 0.7);
+    --bg-card:         rgba(255, 251, 245, 0.82);
+    --bg-card-active:  rgba(240, 230, 210, 0.9);
+    --bg-card-hover:   rgba(255, 253, 250, 0.95);
+    --bg-modal:        #FFFBF5;
+    --bg-input:        rgba(235, 225, 205, 0.5);
+    --border-color:    rgba(166, 124, 82, 0.12);
+    --border-input:    rgba(166, 124, 82, 0.22);
+    --badge-bg:        rgba(166, 124, 82, 0.08);
+    --badge-text:      #6D4C33;
+    --tx-in:           #047857;
+    --tx-out:          #B91C1C;
+  }
+
+  /* 🏢 STANDARD - Modern Indigo / Violet / Slate */
+  .theme-standard {
+    --primary-rgb:     99 102 241; /* Indigo-500 */
+    --bg:              radial-gradient(ellipse at 0% 0%, #EEF2FF 0%, transparent 55%),
+                       radial-gradient(ellipse at 100% 0%, #FAF5FF 0%, transparent 55%),
+                       radial-gradient(ellipse at 50% 100%, #F0F9FF 0%, transparent 60%),
+                       #F8FAFC;
+    --primary:         #6366F1;
+    --primary-contrast:#FFFFFF;
+    --text-primary:    #0F172A;
+    --text-secondary:  #475569;
+    --text-label:      rgba(71, 85, 105, 0.7);
+    --bg-card:         rgba(255, 255, 255, 0.78);
+    --bg-card-active:  rgba(238, 242, 255, 0.85);
+    --bg-card-hover:   rgba(255, 255, 255, 0.92);
+    --bg-modal:        #FFFFFF;
+    --bg-input:        rgba(255, 255, 255, 0.85);
+    --border-color:    rgba(99, 102, 241, 0.14);
+    --border-input:    rgba(99, 102, 241, 0.22);
+    --badge-bg:        rgba(99, 102, 241, 0.10);
+    --badge-text:      #4F46E5;
+    --tx-in:           #059669;
+    --tx-out:          #DC2626;
+  }
+
+  html { background: var(--bg); min-height: 100%; transition: background 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+  body { @apply antialiased; background: transparent; color: var(--text-primary); font-family: 'Sora', sans-serif; letter-spacing: -0.01em; min-height: 100vh; }
+}
+
+@layer components {
+  /* Core UI components mapped to theme vars */
+  .card, .neon-card {
+    @apply relative overflow-hidden rounded-3xl transition-all duration-300 backdrop-blur-2xl;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+  }
+
+  .input, .input-dark {
+    @apply w-full px-4 py-3.5 rounded-2xl border transition-all duration-200 outline-none;
+    background-color: var(--bg-input);
+    border-color: var(--border-input);
+    color: var(--text-primary);
+  }
+
+  .input:focus, .input-dark:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 font-black px-6 py-3.5 rounded-2xl
+           hover:scale-[1.03] active:scale-[0.97] transition-all
+           shadow-xl shadow-primary/10 hover:shadow-primary/20;
+    background: var(--primary);
+    color: var(--primary-contrast);
+  }
+
+  /* Custom scrollbar for some themes */
+  .scrollbar-numly::-webkit-scrollbar { width: 6px; }
+  .scrollbar-numly::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-numly::-webkit-scrollbar-thumb { 
+    background: rgba(var(--primary-rgb), 0.2); 
+    border-radius: 99px;
+  }
+}
+
+@keyframes orbitSpin {
+  0%   { transform: rotate(0deg)   translateY(-14px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateY(-14px) rotate(-360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@keyframes loadingBar {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(-10%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-loading-bar {
+  animation: loadingBar 2s infinite ease-in-out;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translate(-50%, 20px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.animate-slide-up { 
+  animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; 
+}

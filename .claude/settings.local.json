@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(npm install *)",
+      "Bash(tee /tmp/typecheck.txt)",
+      "Bash(npm run *)",
+      "Bash(tee /tmp/lint.txt)",
+      "Bash(node *)",
+      "Bash(curl -sf http://localhost:5173/ -o /dev/null)",
+      "Bash(npx --no-install vercel --version)",
+      "Bash(npm i *)",
+      "Bash(npx playwright *)",
+      "Bash(pbcopy)",
+      "Bash(open -a \"Google Chrome\" \"https://supabase.com/dashboard/project/qdafklgkshwljeyqrwqd/sql/new\")",
+      "Bash(npx vercel *)",
+      "Bash(curl -sI https://numly.vercel.app/)",
+      "Bash(curl -s https://numly.vercel.app/)",
+      "Bash(PROD_URL=https://numly.vercel.app npx playwright test smoke --reporter=list --)",
+      "Bash(grep -n \"title={color}\\\\|aria-label={\\\\`Color\" src/pages/BooksList.tsx src/pages/BusinessList.tsx src/pages/LedgersList.tsx)",
+      "Bash(open *)",
+      "Bash(curl -s -X PATCH \"https://api.supabase.com/v1/projects/qdafklgkshwljeyqrwqd/config/auth\" -H \"Authorization: Bearer sbp_d81dbd424938f19918ada3a7f4d3573c932e62f8\" -H \"Content-Type: application/json\" -d '{\"password_hibp_enabled\":true,\"password_min_length\":8}')",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('password_hibp_enabled =', d.get\\('password_hibp_enabled'\\)\\); print\\('password_min_length =', d.get\\('password_min_length'\\)\\)\")",
+      "Bash(curl -s -X PATCH \"https://api.supabase.com/v1/projects/qdafklgkshwljeyqrwqd/config/auth\" -H \"Authorization: Bearer sbp_d81dbd424938f19918ada3a7f4d3573c932e62f8\" -H \"Content-Type: application/json\" -d '{\"password_min_length\":8}')",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:v for k,v in d.items\\(\\) if 'password' in k.lower\\(\\)}, indent=2\\)\\)\")",
+      "Bash(curl *)",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('skip_nonce_check =', d.get\\('external_google_skip_nonce_check'\\)\\)\")"
+    ]
+  }
+}
