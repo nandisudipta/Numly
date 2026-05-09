@@ -20,7 +20,7 @@ function readErrorFromLocation(): ErrorState | null {
 
   if (!error) return null;
 
-  return { error, description, code };
+  return { error, description: description || undefined, code: code || undefined };
 }
 
 function getReadableErrorMessage(error: ErrorState): string {
@@ -50,7 +50,6 @@ export function AuthCallback() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [debug, setDebug] = useState<string>('Detecting…');
-  const [sessionEstablished, setSessionEstablished] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -88,7 +87,6 @@ export function AuthCallback() {
 
             if (data?.session) {
               console.log('Session established successfully');
-              setSessionEstablished(true);
               if (cancelled) return;
               navigate('/', { replace: true });
               return;
@@ -117,7 +115,6 @@ export function AuthCallback() {
 
         if (data.session) {
           console.log('Session found, redirecting...');
-          setSessionEstablished(true);
           navigate('/', { replace: true });
           return;
         }
@@ -141,7 +138,6 @@ export function AuthCallback() {
             clearTimeout(timeout);
             sub.subscription.unsubscribe();
             console.log('Sign-in complete, redirecting...');
-            setSessionEstablished(true);
             navigate('/', { replace: true });
           }
         });

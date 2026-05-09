@@ -55,7 +55,7 @@ export function useLedgerCreate() {
         decimal_precision: decimalPrecision,
         category_required: data.categoryRequired,
         categories: data.categories,
-        custom_fields_config: data.customFields.length > 0 ? data.customFields : undefined,
+        custom_fields_config: data.customFields.length > 0 ? data.customFields.map(f => ({ name: f.name, is_mandatory: f.isMandatory })) : undefined,
         restrict_backdated_entries: data.restrictBackdated,
         color: data.color,
       });

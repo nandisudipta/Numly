@@ -4,12 +4,11 @@ import { useAuth } from '../hooks/AuthContext';
 import { Layout } from '../components/Layout';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { Trash2, Edit2, LayoutGrid, List, Layers, Plus, Users, ArrowRightLeft, Settings } from 'lucide-react';
-import { logAudit } from '../services/auditLogger';
+import { Trash2, Edit2, LayoutGrid, List, Layers, Plus } from 'lucide-react';
 import { triggerHaptic } from '../utils/haptics';
 import { dataService } from '../core';
 import { RecycleBin } from '../components/RecycleBin';
-import { useToast } from '../components/ui/Toast';
+
 
 // Modal components
 import { CreateLedgerModal } from '../components/modals/CreateLedgerModal';
@@ -38,7 +37,6 @@ export function LedgersList() {
   const navigate = useNavigate();
   const { businessId, bookId } = useParams();
   const { user } = useAuth();
-  const toast = useToast();
   const isMounted = useRef(true);
 
   // Main state
@@ -47,7 +45,6 @@ export function LedgersList() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [bookName, setBookName] = useState('');
-  const [userRole, setUserRole] = useState('captain');
 
   // View & Filter state
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => {
@@ -418,7 +415,7 @@ export function LedgersList() {
           setSelectedLedger(null);
         }}
         onSuccess={handleCreateSuccess}
-        ledger={selectedLedger}
+        ledger={selectedLedger as any}
       />
 
       <DeleteLedgerModal
@@ -438,7 +435,7 @@ export function LedgersList() {
         <RecycleBin
           isOpen={isRecycleBinOpen}
           onClose={() => setIsRecycleBinOpen(false)}
-          onRestore={handleCreateSuccess}
+          onRefresh={handleCreateSuccess}
           businessId={businessId!}
         />
       )}

@@ -40,7 +40,7 @@ export function useTransactionCreate() {
         category: data.category || null,
         note: data.note || null,
         transaction_date: data.transactionDate,
-        attachment_urls: data.attachmentUrls || [],
+        attachment_url: data.attachmentUrls?.[0] || null,
         custom_fields_data: data.customFieldsData || {},
       });
 

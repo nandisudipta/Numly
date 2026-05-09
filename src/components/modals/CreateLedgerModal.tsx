@@ -42,7 +42,6 @@ export function CreateLedgerModal({
   const [customFieldName, setCustomFieldName] = useState('');
   const [customFieldMandatory, setCustomFieldMandatory] = useState(false);
   const [customFieldValues, setCustomFieldValues] = useState<string[]>([]);
-  const [customFieldValueInput, setCustomFieldValueInput] = useState('');
 
   // Restrictions
   const [restrictBackdated, setRestrictBackdated] = useState<'always' | 'never' | 'one_day'>('always');
@@ -66,7 +65,6 @@ export function CreateLedgerModal({
     setCustomFieldName('');
     setCustomFieldMandatory(false);
     setCustomFieldValues([]);
-    setCustomFieldValueInput('');
     setRestrictBackdated('always');
     setError(null);
   };
@@ -83,17 +81,6 @@ export function CreateLedgerModal({
     setCategories(categories.filter(c => c !== cat));
   };
 
-  const addCustomFieldValue = () => {
-    const trimmed = customFieldValueInput.trim();
-    if (trimmed && !customFieldValues.includes(trimmed)) {
-      setCustomFieldValues([...customFieldValues, trimmed]);
-      setCustomFieldValueInput('');
-    }
-  };
-
-  const removeCustomFieldValue = (value: string) => {
-    setCustomFieldValues(customFieldValues.filter(v => v !== value));
-  };
 
   const handleCreateClick = async () => {
     // Validate name uniqueness

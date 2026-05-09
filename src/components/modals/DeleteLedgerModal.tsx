@@ -42,7 +42,6 @@ export function DeleteLedgerModal({
       isOpen={isOpen}
       onClose={onClose}
       title="Delete Ledger"
-      destructive
     >
       <div className="space-y-4">
         {/* Warning Icon */}
