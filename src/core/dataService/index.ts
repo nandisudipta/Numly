@@ -1,6 +1,7 @@
 import { db } from '../db';
 import { syncEngine } from '../sync/syncEngine';
 import type { Space, Book, Ledger, Transaction } from '../db/schema';
+import { uuidv4 } from '../../utils/uuid';
 
 class DataService {
   private userId: string | null = null;
@@ -9,13 +10,33 @@ class DataService {
     this.userId = id;
   }
 
+  // Deletes are durability-critical: another device installing the PWA right
+  // after must NOT see the deleted row resurrect from the cloud. So when online
+  // we wait for the queue to drain before resolving — but cap the wait so a
+  // flaky network can't hang the UI indefinitely. Offline path is instant.
+  private async flushDelete(): Promise<void> {
+    const online = typeof navigator === 'undefined' ? true : navigator.onLine;
+    if (!this.userId || !online) {
+      syncEngine.processQueue();
+      return;
+    }
+    try {
+      await Promise.race([
+        syncEngine.processQueue(),
+        new Promise<void>(resolve => setTimeout(resolve, 5000)),
+      ]);
+    } catch {
+      // processQueue swallows individual op failures; any throw here is fine to ignore
+    }
+  }
+
   // --- Spaces ---
   async getSpaces(): Promise<Space[]> {
     return await db.spaces.filter(s => !s.is_deleted).toArray();
   }
 
   async createSpace(data: Partial<Space>): Promise<Space> {
-    const spaceId = crypto.randomUUID();
+    const spaceId = uuidv4();
     const newSpace: Space = {
       id: spaceId,
       name: data.name!,
@@ -57,11 +78,35 @@ class DataService {
   }
 
   async deleteSpace(id: string): Promise<void> {
-    await this.updateSpace(id, { is_deleted: true });
+    const existing = await db.spaces.get(id);
+    if (!existing) throw new Error('Space not found');
+    const updated = {
+      ...existing,
+      is_deleted: true,
+      updated_at: new Date().toISOString(),
+      syncStatus: this.userId ? 'pending' : 'local'
+    } as Space;
+    await db.transaction('rw', db.spaces, db.syncQueue, async () => {
+      await db.spaces.put(updated);
+      await syncEngine.enqueue('delete', 'spaces', id, updated);
+    });
+    await this.flushDelete();
   }
 
   async restoreSpace(id: string): Promise<void> {
-    await this.updateSpace(id, { is_deleted: false });
+    const existing = await db.spaces.get(id);
+    if (!existing) throw new Error('Space not found');
+    const updated = {
+      ...existing,
+      is_deleted: false,
+      updated_at: new Date().toISOString(),
+      syncStatus: this.userId ? 'pending' : 'local'
+    } as Space;
+    await db.transaction('rw', db.spaces, db.syncQueue, async () => {
+      await db.spaces.put(updated);
+      await syncEngine.enqueue('create', 'spaces', id, updated);
+    });
+    syncEngine.processQueue();
   }
 
   // --- Books ---
@@ -73,7 +118,7 @@ class DataService {
   }
 
   async createBook(data: Partial<Book>): Promise<Book> {
-    const bookId = crypto.randomUUID();
+    const bookId = uuidv4();
     const newBook: Book = {
       id: bookId,
       business_id: data.business_id!,
@@ -115,11 +160,35 @@ class DataService {
   }
 
   async deleteBook(id: string): Promise<void> {
-    await this.updateBook(id, { is_deleted: true });
+    const existing = await db.books.get(id);
+    if (!existing) throw new Error('Book not found');
+    const updated = {
+      ...existing,
+      is_deleted: true,
+      updated_at: new Date().toISOString(),
+      syncStatus: this.userId ? 'pending' : 'local'
+    } as Book;
+    await db.transaction('rw', db.books, db.syncQueue, async () => {
+      await db.books.put(updated);
+      await syncEngine.enqueue('delete', 'books', id, updated);
+    });
+    await this.flushDelete();
   }
 
   async restoreBook(id: string): Promise<void> {
-    await this.updateBook(id, { is_deleted: false });
+    const existing = await db.books.get(id);
+    if (!existing) throw new Error('Book not found');
+    const updated = {
+      ...existing,
+      is_deleted: false,
+      updated_at: new Date().toISOString(),
+      syncStatus: this.userId ? 'pending' : 'local'
+    } as Book;
+    await db.transaction('rw', db.books, db.syncQueue, async () => {
+      await db.books.put(updated);
+      await syncEngine.enqueue('create', 'books', id, updated);
+    });
+    syncEngine.processQueue();
   }
 
   // --- Ledgers ---
@@ -135,7 +204,7 @@ class DataService {
   }
 
   async createLedger(data: Partial<Ledger>): Promise<Ledger> {
-    const ledgerId = crypto.randomUUID();
+    const ledgerId = uuidv4();
     const newLedger: Ledger = {
       id: ledgerId,
       book_id: data.book_id!,
@@ -187,11 +256,35 @@ class DataService {
   }
 
   async deleteLedger(id: string): Promise<void> {
-    await this.updateLedger(id, { is_deleted: true });
+    const existing = await db.ledgers.get(id);
+    if (!existing) throw new Error('Ledger not found');
+    const updated = {
+      ...existing,
+      is_deleted: true,
+      updated_at: new Date().toISOString(),
+      syncStatus: this.userId ? 'pending' : 'local'
+    } as Ledger;
+    await db.transaction('rw', db.ledgers, db.syncQueue, async () => {
+      await db.ledgers.put(updated);
+      await syncEngine.enqueue('delete', 'ledgers', id, updated);
+    });
+    await this.flushDelete();
   }
 
   async restoreLedger(id: string): Promise<void> {
-    await this.updateLedger(id, { is_deleted: false });
+    const existing = await db.ledgers.get(id);
+    if (!existing) throw new Error('Ledger not found');
+    const updated = {
+      ...existing,
+      is_deleted: false,
+      updated_at: new Date().toISOString(),
+      syncStatus: this.userId ? 'pending' : 'local'
+    } as Ledger;
+    await db.transaction('rw', db.ledgers, db.syncQueue, async () => {
+      await db.ledgers.put(updated);
+      await syncEngine.enqueue('create', 'ledgers', id, updated);
+    });
+    syncEngine.processQueue();
   }
 
   // --- Transactions ---
@@ -205,7 +298,7 @@ class DataService {
   }
 
   async createTransaction(data: Partial<Transaction>): Promise<Transaction> {
-    const txId = crypto.randomUUID();
+    const txId = uuidv4();
     const newTx: Transaction = {
       id: txId,
       ledger_id: data.ledger_id!,
@@ -295,11 +388,59 @@ class DataService {
   }
 
   async deleteTransaction(id: string): Promise<void> {
-    await this.updateTransaction(id, { is_deleted: true });
+    const existing = await db.transactions.get(id);
+    if (!existing) throw new Error('Transaction not found');
+    
+    const updated = {
+      ...existing,
+      is_deleted: true,
+      updated_at: new Date().toISOString(),
+      syncStatus: this.userId ? 'pending' : 'local'
+    } as Transaction;
+
+    await db.transaction('rw', db.transactions, db.ledgers, db.syncQueue, async () => {
+      const ledger = await db.ledgers.get(existing.ledger_id);
+      if (ledger) {
+        if (existing.type === 'cash_in') ledger.cash_in = (ledger.cash_in || 0) - existing.amount;
+        if (existing.type === 'cash_out') ledger.cash_out = (ledger.cash_out || 0) - existing.amount;
+        ledger.balance = (ledger.cash_in || 0) - (ledger.cash_out || 0);
+        ledger.updated_at = new Date().toISOString();
+        ledger.syncStatus = this.userId ? 'pending' : 'local';
+        await db.ledgers.put(ledger);
+        await syncEngine.enqueue('update', 'ledgers', ledger.id, ledger);
+      }
+      await db.transactions.put(updated);
+      await syncEngine.enqueue('delete', 'transactions', id, updated);
+    });
+    await this.flushDelete();
   }
 
   async restoreTransaction(id: string): Promise<void> {
-    await this.updateTransaction(id, { is_deleted: false });
+    const existing = await db.transactions.get(id);
+    if (!existing) throw new Error('Transaction not found');
+    
+    const updated = {
+      ...existing,
+      is_deleted: false,
+      updated_at: new Date().toISOString(),
+      syncStatus: this.userId ? 'pending' : 'local'
+    } as Transaction;
+
+    await db.transaction('rw', db.transactions, db.ledgers, db.syncQueue, async () => {
+      const ledger = await db.ledgers.get(existing.ledger_id);
+      if (ledger) {
+        if (existing.type === 'cash_in') ledger.cash_in = (ledger.cash_in || 0) + existing.amount;
+        if (existing.type === 'cash_out') ledger.cash_out = (ledger.cash_out || 0) + existing.amount;
+        ledger.balance = (ledger.cash_in || 0) - (ledger.cash_out || 0);
+        ledger.updated_at = new Date().toISOString();
+        ledger.syncStatus = this.userId ? 'pending' : 'local';
+        await db.ledgers.put(ledger);
+        await syncEngine.enqueue('update', 'ledgers', ledger.id, ledger);
+      }
+      await db.transactions.put(updated);
+      await syncEngine.enqueue('create', 'transactions', id, updated);
+    });
+    syncEngine.processQueue();
   }
 
   // --- Aggregate & Utility Queries ---
@@ -321,10 +462,32 @@ class DataService {
     ];
   }
 
-  // Auth progressive integration
-  triggerSignup() {
-    window.dispatchEvent(new Event('auth:trigger-signup'));
+  async getPortfolioStats(): Promise<{ totalBalance: number, cashInThisMonth: number, cashOutThisMonth: number, activeLedgers: number }> {
+    const allLedgers = await db.ledgers.filter(l => !l.is_deleted).toArray();
+    const totalBalance = allLedgers.reduce((acc, cur) => acc + (cur.balance || 0), 0);
+
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+    const thisMonthTxs = await db.transactions
+      .filter(t => !t.is_deleted && t.transaction_date >= startOfMonth)
+      .toArray();
+
+    let cashInThisMonth = 0;
+    let cashOutThisMonth = 0;
+    for (const tx of thisMonthTxs) {
+      if (tx.type === 'cash_in') cashInThisMonth += tx.amount;
+      else if (tx.type === 'cash_out') cashOutThisMonth += tx.amount;
+    }
+
+    return {
+      totalBalance,
+      cashInThisMonth,
+      cashOutThisMonth,
+      activeLedgers: allLedgers.length
+    };
   }
+
 }
 
 export const dataService = new DataService();
